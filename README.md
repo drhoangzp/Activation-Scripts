@@ -11,8 +11,8 @@
 
 -   On Windows 8.1/10/11, right-click on the Windows start menu and select PowerShell or Terminal (Not CMD).
 -   Copy-paste the below code and press enter\
-    `irm https://raw.githubusercontent.com/drhoangzp/Activation-Scripts/master/get.ps1 | iex`
-    \Link old: `irm https://massgrave.dev/get | iex`
+    `irm https://raw.githubusercontent.com/drhoangzp/Activation-Scripts/master/get.ps1 | iex`\
+    Link old: `irm https://massgrave.dev/get | iex`
 -   You will see the activation options, and follow onscreen instructions.
 -   That's all.
 
