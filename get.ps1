@@ -1,28 +1,27 @@
 $ErrorActionPreference = "Stop"
-
+# Enable TLSv1.2 for compatibility with older clients
 [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
-$URL1 = 'https://raw.githubusercontent.com/drhoangzp/Activation-Scripts/master/MAS/All-In-One-Version/MAS_AIO.cmd'
-$URL2 = 'https://bitbucket.org/WindowsAddict/microsoft-activation-scripts/raw/master/MAS/All-In-One-Version/MAS_AIO.cmd'
+$DownloadURL = 'https://raw.githubusercontent.com/drhoangzp/Activation-Scripts/master/MAS/All-In-One-Version/MAS_AIO.cmd'
+$DownloadURL2 = 'https://bitbucket.org/WindowsAddict/microsoft-activation-scripts/raw/master/MAS/All-In-One-Version/MAS_AIO.cmd'
 
-$randomNumber = Get-Random -Maximum 99999999
+$rand = Get-Random -Maximum 99999999
 $isAdmin = [bool]([Security.Principal.WindowsIdentity]::GetCurrent().Groups -match 'S-1-5-32-544')
 $FilePath = if ($isAdmin) { "$env:SystemRoot\Temp\MAS_$rand.cmd" } else { "$env:TEMP\MAS_$rand.cmd" }
 
 try {
-    $webResponse = Invoke-WebRequest -Uri $URL1 -UseBasicParsing
+    $response = Invoke-WebRequest -Uri $DownloadURL -UseBasicParsing
 }
 catch {
-    $webResponse = Invoke-WebRequest -Uri $URL2 -UseBasicParsing
+    $response = Invoke-WebRequest -Uri $DownloadURL2 -UseBasicParsing
 }
 
-$ArgsForScript = "$args "
-$prefixContent = "@REM $randomNumber `r`n"
-$fileContent = $prefixContent + $webResponse
+$ScriptArgs = "$args "
+$prefix = "@REM $rand `r`n"
+$content = $prefix + $response
+Set-Content -Path $FilePath -Value $content
 
-Set-Content -Path $FileDir -Value $fileContent
+Start-Process $FilePath $ScriptArgs -Wait
 
-Start-Process $FileDir $ArgsForScript -Wait
-
-$FilesToBeDeleted = @("$env:TEMP\MAS*.cmd", "$env:SystemRoot\Temp\MAS*.cmd")
-foreach ($File in $FilesToBeDeleted) { Get-Item $File | Remove-Item }
+$FilePaths = @("$env:TEMP\MAS*.cmd", "$env:SystemRoot\Temp\MAS*.cmd")
+foreach ($FilePath in $FilePaths) { Get-Item $FilePath | Remove-Item }
