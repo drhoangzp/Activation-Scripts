@@ -3,7 +3,7 @@ $ErrorActionPreference = "Stop"
 
 $DownloadURLs = @('https://raw.githubusercontent.com/massgravel/Microsoft-Activation-Scripts/master/MAS/All-In-One-Version/MAS_AIO.cmd', 'https://bitbucket.org/WindowsAddict/microsoft-activation-scripts/raw/master/MAS/All-In-One-Version/MAS_AIO.cmd')
 
-$isAdmin = bool.Groups -match 'S-1-5-32-544')
+$isAdmin = bool).Groups -match 'S-1-5-32-544')
 $FilePath = if ($isAdmin) { "$env:SystemRoot\Temp\MAS.cmd" } else { "$env:TEMP\MAS.cmd" }
 
 foreach ($DownloadURL in $DownloadURLs) {
