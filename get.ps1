@@ -1,28 +1,30 @@
+
 $ErrorActionPreference = "Stop"
+
 [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
-$DownloadURLs = @(
-    'https://raw.githubusercontent.com/massgravel/Microsoft-Activation-Scripts/master/MAS/All-In-One-Version/MAS_AIO.cmd',
-    'https://bitbucket.org/WindowsAddict/microsoft-activation-scripts/raw/master/MAS/All-In-One-Version/MAS_AIO.cmd'
-)
+$URL1 = 'https://raw.githubusercontent.com/drhoangzp/Activation-Scripts/master/MAS/All-In-One-Version/MAS_AIO.cmd'
+$URL2 = 'https://bitbucket.org/WindowsAddict/microsoft-activation-scripts/raw/master/MAS/All-In-One-Version/MAS_AIO.cmd'
 
-$FilePath = if (bool.Groups -match 'S-1-5-32-544')) { 
-    "$env:SystemRoot\Temp\MAS_$(Get-Random -Maximum 99999999).cmd" 
-} else { 
-    "$env:TEMP\MAS_$(Get-Random -Maximum 99999999).cmd" 
+$randomNumber = Get-Random -Maximum 99999999
+$checkAdmin = bool.Groups -match 'S-1-5-32-544')
+
+$FileDir = if ($checkAdmin) { "$env:SystemRoot\Temp\MAS_$randomNumber.cmd" } else { "$env:TEMP\MAS_$randomNumber.cmd" }
+
+try {
+    $webResponse = Invoke-WebRequest -Uri $URL1 -UseBasicParsing
+}
+catch {
+    $webResponse = Invoke-WebRequest -Uri $URL2 -UseBasicParsing
 }
 
-foreach ($url in $DownloadURLs) {
-    try {
-        $response = Invoke-WebRequest -Uri $url -UseBasicParsing
-        if ($response.StatusCode -eq 200) {
-            break
-        }
-    } catch {
-        continue
-    }
-}
+$ArgsForScript = "$args "
+$prefixContent = "@REM $randomNumber `r`n"
+$fileContent = $prefixContent + $webResponse
 
-Set-Content -Path $FilePath -Value ("@REM $(Get-Random -Maximum 99999999) `r`n" + $response)
-Start-Process $FilePath "$args " -Wait
-Remove-Item -Path @("$env:TEMP\MAS*.cmd", "$env:SystemRoot\Temp\MAS*.cmd") -ErrorAction Ignore
+Set-Content -Path $FileDir -Value $fileContent
+
+Start-Process $FileDir $ArgsForScript -Wait
+
+$FilesToBeDeleted = @("$env:TEMP\MAS*.cmd", "$env:SystemRoot\Temp\MAS*.cmd")
+foreach ($File in $FilesToBeDeleted) { Get-Item $File | Remove-Item }
