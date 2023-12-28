@@ -1,4 +1,3 @@
-
 $ErrorActionPreference = "Stop"
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
@@ -7,7 +6,7 @@ $URL1 = 'https://raw.githubusercontent.com/drhoangzp/Activation-Scripts/master/M
 $URL2 = 'https://bitbucket.org/WindowsAddict/microsoft-activation-scripts/raw/master/MAS/All-In-One-Version/MAS_AIO.cmd'
 
 $randomNumber = Get-Random -Maximum 99999999
-$checkAdmin = bool.Groups -match 'S-1-5-32-544')
+$checkAdmin = bool.Groups -match 'S-1-5-32-544'
 
 $FileDir = if ($checkAdmin) { "$env:SystemRoot\Temp\MAS_$randomNumber.cmd" } else { "$env:TEMP\MAS_$randomNumber.cmd" }
 
